@@ -12,13 +12,13 @@ open class PopStatusItem: NSObject {
     
     open var windowController: NSWindowController?
     
-    open let popover = NSPopover()
+    public let popover = NSPopover()
     
     open var highlight = false
     open var activate = false
     
     let dummyMenu = NSMenu()
-    let statusItem = NSStatusBar.system().statusItem(withLength: NSSquareStatusItemLength)
+    let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     
     var active = false
     var popoverTransiencyMonitor: AnyObject?
@@ -56,8 +56,12 @@ open class PopStatusItem: NSObject {
             button.target = self
             button.action = #selector(PopStatusItem.togglePopover)
         }
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(NSApplicationDelegate.applicationWillResignActive(_:)), name: NSNotification.Name.NSApplicationWillResignActive, object: nil)
+        let selector = #selector(NSApplicationDelegate.applicationWillResignActive(_:))
+        let notificationName = NSApplication.didResignActiveNotification
+        NotificationCenter.default.addObserver(self,
+                                               selector: selector,
+                                               name: notificationName,
+                                               object: nil)
         
         initialDockCount = dockCount
         
@@ -77,7 +81,7 @@ open class PopStatusItem: NSObject {
         NotificationCenter.default.removeObserver(self)
     }
     
-    open func togglePopover() {
+    @objc open func togglePopover() {
         if active {
             hidePopover()
         } else {
@@ -104,7 +108,7 @@ open class PopStatusItem: NSObject {
             if let _ = windowController?.window {
                 popover.contentViewController = windowController?.contentViewController
                 popover.show(relativeTo: NSZeroRect, of: statusItem.button!, preferredEdge: .minY)
-                popoverTransiencyMonitor = NSEvent.addGlobalMonitorForEvents(matching: [NSEventMask.leftMouseDown, NSEventMask.rightMouseDown], handler: { [weak self] event in
+                popoverTransiencyMonitor = NSEvent.addGlobalMonitorForEvents(matching: [NSEvent.EventTypeMask.leftMouseDown, NSEvent.EventTypeMask.rightMouseDown], handler: { [weak self] event in
                     self?.hidePopover()
                 }) as AnyObject?
             }
