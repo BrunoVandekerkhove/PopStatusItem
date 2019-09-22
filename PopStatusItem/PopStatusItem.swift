@@ -45,7 +45,7 @@ open class PopStatusItem: NSObject {
             statusItem.button?.title = newValue ?? ""
         }
     }
-
+    
     public init(image: NSImage) {
         super.init()
         
@@ -56,7 +56,7 @@ open class PopStatusItem: NSObject {
             button.target = self
             button.action = #selector(PopStatusItem.togglePopover)
         }
-        let selector = #selector(NSApplicationDelegate.applicationWillResignActive(_:))
+        let selector = #selector(applicationWillResignActive(_:))
         let notificationName = NSApplication.didResignActiveNotification
         NotificationCenter.default.addObserver(self,
                                                selector: selector,
@@ -126,7 +126,7 @@ open class PopStatusItem: NSObject {
         }
     }
     
-    open func applicationWillResignActive(_ notification: Notification) {
+    @objc open func applicationWillResignActive(_ notification: Notification) {
         if active {
             hidePopover()
         }
